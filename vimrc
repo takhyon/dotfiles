@@ -16,6 +16,7 @@ set expandtab
 set softtabstop=2
 set shiftwidth=2
 set number
+set bg=dark
 
 highlight LiteralTabs ctermbg=darkgreen guibg=darkgreen
 match LiteralTabs /\s\	/
