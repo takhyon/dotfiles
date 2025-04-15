@@ -1,0 +1,78 @@
+username: 'salrea'
+secret: '/usr/local/bin/.token'
+
+authproxies:
+  - url: 'https://car-exch-sys.nasdaqomx.com'
+    type: 'checkpoint'
+    tags:
+      - 'GitLab'
+    aliases:
+  - url: 'https://tde.authproxy.org.nasdaqomx.com'
+    type: 'cisco'
+    tags:
+      - 'TDE'
+    aliases:
+  - url: 'https://us02-aws-pricld.nasdaqomx.com:1003/portal?Auth'
+    type: 'checkpoint'
+    tags:
+      - 'AWS'
+      - 'Primary'
+    aliases:
+  - url: 'https://us02-az-pricld.nasdaqomx.com:1003/portal?auth'
+    type: 'checkpoint'
+    tags:
+      - 'Azure'
+      - 'East US'
+    aliases:
+  - url: 'https://us01tsiexfwv02.nasdaqomx.com'
+    type: 'cisco'
+    tags:
+      - 'AWS Backup'
+    aliases:
+  - url: 'https://us16ebnc-ise.nasdaqomx.com'
+    type: 'cisco'
+    tags:
+      - 'ISE'
+    aliases:
+  - url: 'https://us18-aws-pricld.nasdaqomx.com:1003/portal?'
+    type: 'checkpoint'
+    tags:
+      - 'AWS'
+      - 'Chicago'
+    aliases:
+  - url: 'https://us18-az-pricld.nasdaqomx.com:1003/portal?'
+    type: 'checkpoint'
+    tags:
+      - 'Azure'
+      - 'North Central US'
+      - 'Chicago'
+    aliases:
+  - url: 'https://us18-gc-pricld.nasdaqomx.com:1003/portal?'
+    type: 'checkpoint'
+    tags:
+      - 'GCP'
+      - 'Chicago'
+    aliases:
+    aliases:
+  - url: 'https://sydney.authproxy.org.nasdaqomx.com'
+    type: 'cisco'
+    tags:
+      - 'Sydney'
+    aliases:
+  - url: 'https://se20-aws-pricld.nasdaqomx.com:1003/portal?Auth'
+    type: 'checkpoint'
+    tags:
+      - 'AWS'
+      - 'Sweden'
+    aliases:
+  - url: 'https://se20-az-pricld.nasdaqomx.com:1003/portal?auth'
+    type: 'checkpoint'
+    tags:
+      - 'Azure'
+      - 'North Europe'
+    aliases:
+  - url: ' https://159.79.128.21'
+    type: 'cisco'
+    tags:
+      - 'Splunk'
+    aliases:

@@ -74,6 +74,6 @@ HISTFILE=$HOME/.bash_history
 export HISTCONTROL=ignoredups:erasedups
 shopt -s histappend
 
-PATH=$PATH:$HOME/.rvm/bin:$HOME:$HOME/Workspace.ISE/chocopackages/helpful_files:$HOME/Workspace.ISE/puppet/helpful_files:$HOME/Workspace/helpful-files # Add RVM to PATH for scripting
+PATH=$PATH:$HOME/.rvm/bin:$HOME:$HOME/Workspace.ISE/chocopackages/helpful_files:$HOME/Workspace.ISE/puppet/helpful_files:$HOME/Workspace/helpful-files:/Users/salrea/go/bin:/usr/local/opt/awscli@1/bin # Add RVM to PATH for scripting
 
-export EDITOR="/usr/local/bin/mate -w"
+#export EDITOR="/usr/local/bin/mate -w"

@@ -26,3 +26,8 @@ if [ -f "/Users/salrea/.okta/bash_functions" ]; then
     . "/Users/salrea/.okta/bash_functions"
 fi
 
+export PATH=/Users/salrea/homebrew/bin:/Users/salrea/homebrew/sbin:/Users/salrea/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/MacGPG2/bin:/usr/local/share/dotnet:~/.dotnet/tools:/Users/salrea/.rvm/bin:/Users/salrea:/Users/salrea/Workspace.ISE/chocopackages/helpful_files:/Users/salrea/Workspace.ISE/puppet/helpful_files:/Users/salrea/Workspace/helpful-files:/usr/local/go/bin:/usr/local/opt/awscli@1/bin:"/Applications/Sublime Text.app/Contents/SharedSupport/bin"
+
+alias assume="source assume"
+
+alias assume=". assume"

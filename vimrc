@@ -58,3 +58,5 @@ highlight LiteralTabs ctermbg=darkgreen guibg=darkgreen
 match LiteralTabs /\s\	/
 highlight ExtraWhitespace ctermbg=darkgreen guibg=darkgreen
 match ExtraWhitespace /\s\+$/
+
+set conceallevel=0

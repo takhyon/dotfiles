@@ -1,6 +1,8 @@
 [user]
   name = Salvatore Realmuto
   email = salvatore.realmuto@nasdaq.com
+[core]
+  editor = vim
 [color]
   ui = true
 [color "branch"]
@@ -19,8 +21,8 @@
   branch = yellow bold
 [alias]
   authors = shortlog -sn
-  behind = !git log ..origin/master --oneline
-  ahead = !git log origin/master.. --oneline
+  behind = !git fetch origin --prune && git log ..origin/master --oneline
+  ahead = !git fetch origin --prune && git log origin/master.. --oneline
   upstream = !git cherry upstream/master
   files = !git diff --name-only upstream/master..
   dupes = !git rev-list --objects --all | cut -c1-7 | sort | uniq -c | grep -v '^ *1'
@@ -42,12 +44,12 @@
   llog = log --date=local
   fop = !git fetch origin --prune
   reb = !git fetch origin --prune && git rebase
+  tg = !git describe --tags
+  tgs = !git tag --merged
+  stale = !git branch -r --sort=-committerdate --format='%(committerdate:relative)%09%(refname:short)'
 [rerere]
   enabled = true
 [push]
   default = simple
-[remote "upstream"]
-  fetch = +refs/heads/*:refs/remotes/upstream/*
-  fetch = +refs/pull-requests/*/from:refs/remotes/upstream/pr/*
 [pull]
-	rebase = true
+  rebase = true

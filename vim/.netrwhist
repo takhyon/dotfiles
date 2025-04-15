@@ -1,3 +1,12 @@
 let g:netrw_dirhistmax  =10
-let g:netrw_dirhist_cnt =1
-let g:netrw_dirhist_1='/Users/salrea/workspace/gitlab/CloudPlatform/terraform/terraform-aws-lambda/tests/standard/functions'
+let g:netrw_dirhistcnt =3
+let g:netrw_dirhist_3='/Users/salrea/Workspace/gitlab/CloudPlatform/terraform/terraform-aws-compute-eks/scripts'
+let g:netrw_dirhist_2='/Users/salrea/Workspace/gitlab/CloudPlatform/terraform/terraform-aws-compute-eks/tests/standard/auto-mode-test'
+let g:netrw_dirhist_1='/Users/salrea/Workspace/gitlab/CloudPlatform/projects/aws/aws-gt-tfos/src/workloads/gitlab-runner/src'
+let g:netrw_dirhist_0='/Users/salrea/Workspace/gitlab/CloudPlatform/lambda-functions/account-compliance/ci'
+let g:netrw_dirhist_9='/Users/salrea/.terraform.d'
+let g:netrw_dirhist_8='/Users/salrea/Workspace/gitlab/CloudPlatform/lambda-functions/NADQ2 Universal Services Reporting and Compliance/Reporting/nadq2universalservices-reporting/nadq2universalservices-reporting/dir'
+let g:netrw_dirhist_7='/Users/salrea/Workspace/gitlab/CloudPlatform/lambda-functions/NADQ2 Universal Services Reporting and Compliance/Reporting/nadq2universalservices-reporting-utils/python'
+let g:netrw_dirhist_6='/Users/salrea/Workspace/gitlab/CloudPlatform/lambda-functions/NADQ2 Universal Services Reporting and Compliance/Reporting/nadq2universalservices-reporting-utils/python/reporting_utils'
+let g:netrw_dirhist_5='/Users/salrea/Workspace/gitlab/CloudPlatform/projects/aws/aws-gt-tfms-eks-integration/src'
+let g:netrw_dirhist_4='/Users/salrea/Workspace/gitlab/CloudPlatform/lambda-functions/NADQ2 Universal Services Reporting and Compliance/nadq2universalservices-reporting-eks-worker/nadq2universalservices-reporting-eks-worker'

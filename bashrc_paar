@@ -1,0 +1,81 @@
+###
+### Set HTTP and HTTPS proxy
+###
+
+# Uncomment the region you are currently in. Comment out the rest!
+
+#NADQ_PROXY_LOCATION="APAC"
+#NADQ_PROXY="http://103.7.147.2:8080"
+#NADQ_SSL_PROXY="http://103.7.147.2:8080"
+
+# NADQ_PROXY_LOCATION="US"
+# US_NADQ_PROXY="http://proxy-us01.org.nasdaqomx.com:8080"
+# US_NADQ_SSL_PROXY="https://proxy-us01.org.nasdaqomx.com:8080"
+
+NADQ_PROXY_LOCATION="EMEA"
+NADQ_PROXY="http://se20cbcsg01.org.nasdaqomx.com:8080"
+NADQ_SSL_PROXY="http://se20cbcsg01.org.nasdaqomx.com:8080"
+
+## We use no proxy for these locations. Generally these are internal nasdaq owned address spaces
+#NADQ_NO_PROXY="localhost,127.0.0.1,localaddress,*localdomain.com,localdomain.com,*.local,*.internal,169.254/16,*.nasdaq.com,nasdaq.com,*nasdaqomx.com,nasdaqomx.com,*.smbc.nasdaqomx.com,tfe.ops.nadq2universalservices.gi.nadq.ci"
+NADQ_NO_PROXY="localhost,127.0.0.1,localaddress,*localdomain.com,localdomain.com,192.168.0.0/16,10.0.0.0/8,172.16.0.0/12,*nasdaq.com,nasdaq.com,*nasdaqomx.com,nasdaqomx.com,*ften.com,ften.com,*om.com,om.com,*.om,.om,minikube,*.smbc.nasdaqomx.com,tfe.ops.nadq2universalservices.gi.nadq.ci"
+
+###
+### Attempt proxy authentication
+###
+proxy_authenticate() {
+        echo "Attempting NTLM auth to $NADQ_PROXY as $USER"
+        curl --fail-early -f -v -I -L --proxy-ntlm -U $USER -x $NADQ_PROXY www.google.com
+        if [ $? -ne 0 ]; then
+           echo ""
+           echo "ERROR: unable to authenticate to proxy"
+        else
+           echo ""
+           echo "Successfully authenticated with proxy"
+        fi
+        echo ""
+}
+
+###
+### Get status of proxy settings
+###
+proxy_status() {
+        if [[ -z $HTTP_PROXY ]]; then
+                echo "Proxy DISABLED";
+        else
+                echo "Using HTTP/S_PROXY: $HTTP_PROXY"
+        fi
+}
+
+###
+### Enable proxy
+###
+proxy_enable() {
+        export HTTP_PROXY=${NADQ_PROXY}
+        export HTTPS_PROXY=${NADQ_SSL_PROXY}
+        export http_proxy=${NADQ_PROXY}
+        export https_proxy=${NADQ_SSL_PROXY}
+        export NO_PROXY=${NADQ_NO_PROXY}
+        export no_proxy=${NADQ_NO_PROXY}
+        proxy_status
+}
+
+###
+### Disable proxy
+###
+proxy_disable() {
+        unset HTTP_PROXY
+        unset HTTPS_PROXY
+        unset http_proxy
+        unset https_proxy
+        unset NO_PROXY
+        unset no_proxy
+        proxy_status
+}
+
+if [[ $HTTP_PROXY == ${NADQ_PROXY} && $HTTPS_PROXY == ${NADQ_SSL_PROXY} ]]; then
+        #proxy is set, no edits necessary
+        proxy_status
+    else
+        proxy_enable
+fi
