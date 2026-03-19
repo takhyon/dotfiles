@@ -158,8 +158,13 @@ if [[ -n "$desired_appstore" ]]; then
     app_id=$(echo "$entry" | awk '{print $1}')
     app_name=$(echo "$entry" | cut -d' ' -f2-)
     if ! echo "$current_appstore" | grep -qx "$app_id"; then
-      echo "  Installing: $app_name ($app_id)"
-      run mas install "$app_id" || echo "  WARNING: Failed to install $app_name"
+      # Check if app exists in /Applications before trying to install
+      if ls /Applications/ | grep -qi "^${app_name%% *}"; then
+        echo "  Skipping: $app_name (installed but not indexed in Spotlight)"
+      else
+        echo "  Installing: $app_name ($app_id)"
+        run mas install "$app_id" || echo "  WARNING: Failed to install $app_name"
+      fi
     fi
   done <<< "$desired_appstore"
 fi

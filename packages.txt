@@ -34,15 +34,9 @@ robscott/tap/kube-capacity
 
 [casks]
 iterm2
+maccy
 okta
 powershell
-
-# Manual installs (not managed by this script):
-#
-# Teleport tsh v18.6.3
-#   Do NOT install via Homebrew (not officially maintained).
-#   curl -O https://cdn.teleport.dev/teleport-ent-18.6.3.pkg
-#   sudo installer -pkg teleport-ent-18.6.3.pkg -target /
 
 [appstore]
 1569813296 1Password for Safari
@@ -64,3 +58,11 @@ powershell
 1611378436 Pure Paste
 1466761512 Stackitecture
 497799835 Xcode
+
+# Manual installs (not managed by this script):
+#
+# Teleport tsh v18.6.3
+#   Do NOT install via Homebrew (not officially maintained).
+#   curl -O https://cdn.teleport.dev/teleport-ent-18.6.3.pkg
+#   sudo installer -pkg teleport-ent-18.6.3.pkg -target /
+
