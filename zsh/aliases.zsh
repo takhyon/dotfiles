@@ -1,0 +1,5 @@
+alias ll='ls -lah'
+alias kc='kubectl'
+alias cd..='cd ..'
+alias cdr='cd $(git rev-parse --show-toplevel)'
+alias clip='pbcopy'
