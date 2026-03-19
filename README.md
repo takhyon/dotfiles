@@ -47,3 +47,11 @@ packaged-goods              # sync packages
 packaged-goods --dry-run    # preview changes
 packaged-goods --upgrade    # upgrade all
 ```
+
+To add an App Store app, find its ID with:
+
+```bash
+mas search <app name>
+```
+
+Then add the ID and name to the `[appstore]` section in `packages.txt`.

@@ -44,25 +44,23 @@ powershell
 #   curl -O https://cdn.teleport.dev/teleport-ent-18.6.3.pkg
 #   sudo installer -pkg teleport-ent-18.6.3.pkg -target /
 
-# [appstore] (uncomment to enable App Store syncing)
-# Add App Store apps as: id name
-# Find IDs with: mas search <app name>
-# 1569813296 1Password for Safari
-# 1091189122 Bear
-# 6698876601 Folder Preview
-# 682658836 GarageBand
-# 408981434 iMovie
-# 361285480 Keynote
-# 6739782043 Launchy
-# 6749231871 Meeter
-# 1274495053 Microsoft To Do
-# 361304891 Numbers
-# 490179405 Okta Verify
-# 823766827 OneDrive
-# 361309726 Pages
-# 1445328303 PrettyJSON for Safari
-# 1611378436 Pure Paste
-# Unable to find in App Store (renamed or delisted?):
-# FruitJuice (com.batteryProject.FruitJuiceMAS)
-# Stackitecture (com.stackitecture.stackitecture)
-# OTP Manager (nl.stickybit.OTP-Manager)
+[appstore]
+1569813296 1Password for Safari
+1091189122 Bear
+6698876601 Folder Preview
+671736912 FruitJuice
+682658836 GarageBand
+408981434 iMovie
+409183694 Keynote
+6739782043 Launchy
+1510445899 Meeter
+1274495053 Microsoft To Do
+409203825 Numbers
+490179405 Okta Verify
+823766827 OneDrive
+928941247 OTP Manager
+409201541 Pages
+1445328303 PrettyJSON for Safari
+1611378436 Pure Paste
+1466761512 Stackitecture
+497799835 Xcode
