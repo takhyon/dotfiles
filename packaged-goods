@@ -1,0 +1,280 @@
+#!/bin/bash
+set -euo pipefail
+
+usage() {
+  cat <<EOF
+Usage: $(basename "$0") [OPTIONS] [PACKAGES_FILE]
+
+Sync Homebrew packages to match a declarative package manifest.
+Installs missing packages and removes packages not in the manifest.
+
+Arguments:
+  PACKAGES_FILE    Path to package manifest (default: ./packages.txt)
+
+Options:
+  --dry-run        Show what would be done without making changes
+  --upgrade [PKG]  Upgrade a specific package, or all if no package specified
+  -h, --help       Show this help message
+
+Notes:
+  App Store apps ([appstore] section) are install-only. Removal must be
+  done manually as macOS does not support programmatic uninstallation.
+
+Examples:
+  $(basename "$0")                      # Sync using ./packages.txt
+  $(basename "$0") --dry-run            # Preview changes
+  $(basename "$0") --upgrade            # Sync and upgrade all packages
+  $(basename "$0") --upgrade helm       # Upgrade only helm
+  $(basename "$0") --dry-run --upgrade  # Preview upgrade changes
+  $(basename "$0") ~/my-packages.txt    # Use a custom manifest
+EOF
+  exit 0
+}
+
+DRY_RUN=false
+UPGRADE=false
+UPGRADE_PKG=""
+PACKAGES_FILE=""
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    -h|--help) usage ;;
+    --dry-run) DRY_RUN=true; shift ;;
+    --upgrade)
+      UPGRADE=true; shift
+      if [[ $# -gt 0 && ! "$1" =~ ^-- ]]; then
+        UPGRADE_PKG="$1"; shift
+      fi
+      ;;
+    *) PACKAGES_FILE="$1"; shift ;;
+  esac
+done
+
+SCRIPT_DIR="$(cd "$(dirname "$(readlink "$0" || echo "$0")")" && pwd)"
+PACKAGES_FILE="${PACKAGES_FILE:-$SCRIPT_DIR/packages.txt}"
+
+if [[ ! -f "$PACKAGES_FILE" ]]; then
+  echo "ERROR: Package file not found: $PACKAGES_FILE"
+  exit 1
+fi
+
+run() {
+  if $DRY_RUN; then
+    echo "  [dry-run] $*"
+  else
+    "$@"
+  fi
+}
+
+parse_section() {
+  local section="$1" file="$2"
+  sed -n "/^\[$section\]/,/^\[/p" "$file" | grep -v '^\[' | grep -v '^#' | grep -v '^$' || true
+}
+
+desired_taps=$(parse_section "taps" "$PACKAGES_FILE")
+desired_formulae=$(parse_section "formulae" "$PACKAGES_FILE")
+desired_casks=$(parse_section "casks" "$PACKAGES_FILE")
+desired_appstore=$(parse_section "appstore" "$PACKAGES_FILE")
+
+# Install Homebrew if missing
+if ! command -v brew &>/dev/null; then
+  echo "==> Installing Homebrew..."
+  run /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  if [[ -f /opt/homebrew/bin/brew ]]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+  fi
+fi
+
+# --- Taps ---
+echo "==> Syncing taps..."
+current_taps=$(brew tap)
+
+while IFS= read -r tap; do
+  if ! echo "$current_taps" | grep -qx "$tap"; then
+    echo "  Adding tap: $tap"
+    run brew tap "$tap"
+  fi
+done <<< "$desired_taps"
+
+while IFS= read -r tap; do
+  [[ -z "$tap" ]] && continue
+  if ! echo "$desired_taps" | grep -qx "$tap"; then
+    # Uninstall any formulae from this tap first
+    tap_formulae=$(brew list --formula --full-name | grep "^${tap}/" || true)
+    for tf in $tap_formulae; do
+      echo "  Removing $tf (from tap $tap)"
+      run brew uninstall "$tf" || echo "  WARNING: Failed to remove $tf"
+    done
+    echo "  Removing tap: $tap"
+    run brew untap "$tap"
+  fi
+done <<< "$current_taps"
+
+# --- Formulae ---
+echo "==> Syncing formulae..."
+current_formulae=$(brew leaves)
+
+while IFS= read -r formula; do
+  if ! echo "$current_formulae" | grep -qx "$formula"; then
+    echo "  Installing: $formula"
+    run brew install "$formula" || echo "  WARNING: Failed to install $formula"
+  fi
+done <<< "$desired_formulae"
+
+while IFS= read -r formula; do
+  [[ -z "$formula" ]] && continue
+  if ! echo "$desired_formulae" | grep -qx "$formula"; then
+    echo "  Removing: $formula"
+    run brew uninstall "$formula" || echo "  WARNING: Failed to remove $formula"
+  fi
+done <<< "$current_formulae"
+
+# --- Casks ---
+echo "==> Syncing casks..."
+current_casks=$(brew list --cask)
+
+while IFS= read -r cask; do
+  if ! echo "$current_casks" | grep -qx "$cask"; then
+    echo "  Installing cask: $cask"
+    run brew install --cask "$cask" || echo "  WARNING: Failed to install $cask"
+  fi
+done <<< "$desired_casks"
+
+while IFS= read -r cask; do
+  [[ -z "$cask" ]] && continue
+  if ! echo "$desired_casks" | grep -qx "$cask"; then
+    echo "  Removing cask: $cask"
+    run brew uninstall --cask "$cask" || echo "  WARNING: Failed to remove $cask"
+  fi
+done <<< "$current_casks"
+
+# --- App Store ---
+if [[ -n "$desired_appstore" ]]; then
+  echo "==> Syncing App Store apps..."
+  current_appstore=$(mas list | awk '{print $1}')
+
+  while IFS= read -r entry; do
+    [[ -z "$entry" ]] && continue
+    app_id=$(echo "$entry" | awk '{print $1}')
+    app_name=$(echo "$entry" | cut -d' ' -f2-)
+    if ! echo "$current_appstore" | grep -qx "$app_id"; then
+      echo "  Installing: $app_name ($app_id)"
+      run mas install "$app_id" || echo "  WARNING: Failed to install $app_name"
+    fi
+  done <<< "$desired_appstore"
+fi
+
+# --- Upgrade ---
+if $UPGRADE; then
+  # Single package upgrade
+  if [[ -n "$UPGRADE_PKG" ]]; then
+    if ! echo "$desired_formulae" | grep -qx "$UPGRADE_PKG" && ! echo "$desired_casks" | grep -qx "$UPGRADE_PKG"; then
+      echo "ERROR: '$UPGRADE_PKG' is not in your package manifest."
+      exit 1
+    fi
+
+    outdated_json=$(brew outdated --json=v2)
+    entry=$(echo "$outdated_json" | python3 -c "
+import sys, json
+pkg = '$UPGRADE_PKG'
+data = json.load(sys.stdin)
+for f in data.get('formulae', []):
+    if f['name'] == pkg:
+        current = f['installed_versions'][0] if f.get('installed_versions') else '?'
+        print(f\"formula|{f['name']}|{current}|{f.get('current_version', '?')}\")
+        sys.exit()
+for c in data.get('casks', []):
+    if c['name'] == pkg:
+        print(f\"cask|{c['name']}|{c.get('installed_versions', '?')}|{c.get('current_version', '?')}\")
+        sys.exit()
+")
+
+    if [[ -z "$entry" ]]; then
+      echo "  $UPGRADE_PKG is already up to date."
+    else
+      kind=$(echo "$entry" | cut -d'|' -f1)
+      name=$(echo "$entry" | cut -d'|' -f2)
+      current=$(echo "$entry" | cut -d'|' -f3)
+      latest=$(echo "$entry" | cut -d'|' -f4)
+      printf "  %-40s %s -> %s\n" "$name" "$current" "$latest"
+      if ! $DRY_RUN; then
+        read -rp "Upgrade $name? [y/N] " confirm
+        if [[ "$confirm" =~ ^[Yy]$ ]]; then
+          if [[ "$kind" == "cask" ]]; then
+            brew upgrade --cask "$name" || echo "  WARNING: Failed to upgrade $name"
+          else
+            brew upgrade "$name" || echo "  WARNING: Failed to upgrade $name"
+          fi
+        else
+          echo "  Skipping."
+        fi
+      fi
+    fi
+  else
+    # Upgrade all
+    echo "==> Checking for outdated packages..."
+    outdated_json=$(brew outdated --json=v2)
+
+    upgrade_list=()
+    while IFS= read -r entry; do
+      [[ -z "$entry" ]] && continue
+      name=$(echo "$entry" | cut -d'|' -f1)
+      current=$(echo "$entry" | cut -d'|' -f2)
+      latest=$(echo "$entry" | cut -d'|' -f3)
+      if echo "$desired_formulae" | grep -qx "$name"; then
+        printf "  %-40s %s -> %s\n" "$name" "$current" "$latest"
+        upgrade_list+=("$name")
+      fi
+    done <<< "$(echo "$outdated_json" | python3 -c "
+import sys, json
+data = json.load(sys.stdin)
+for f in data.get('formulae', []):
+    name = f['name']
+    current = f['installed_versions'][0] if f.get('installed_versions') else '?'
+    latest = f.get('current_version', '?')
+    print(f'{name}|{current}|{latest}')
+")"
+
+    cask_upgrade_list=()
+    while IFS= read -r entry; do
+      [[ -z "$entry" ]] && continue
+      name=$(echo "$entry" | cut -d'|' -f1)
+      current=$(echo "$entry" | cut -d'|' -f2)
+      latest=$(echo "$entry" | cut -d'|' -f3)
+      if echo "$desired_casks" | grep -qx "$name"; then
+        printf "  %-40s %s -> %s\n" "$name" "$current" "$latest"
+        cask_upgrade_list+=("$name")
+      fi
+    done <<< "$(echo "$outdated_json" | python3 -c "
+import sys, json
+data = json.load(sys.stdin)
+for c in data.get('casks', []):
+    name = c['name']
+    current = c.get('installed_versions', '?')
+    latest = c.get('current_version', '?')
+    print(f'{name}|{current}|{latest}')
+")"
+
+    total=$(( ${#upgrade_list[@]} + ${#cask_upgrade_list[@]} ))
+    if [[ $total -eq 0 ]]; then
+      echo "  Everything is up to date."
+    elif ! $DRY_RUN; then
+      echo ""
+      read -rp "Upgrade $total package(s)? [y/N] " confirm
+      if [[ "$confirm" =~ ^[Yy]$ ]]; then
+        for formula in "${upgrade_list[@]}"; do
+          echo "  Upgrading: $formula"
+          brew upgrade "$formula" || echo "  WARNING: Failed to upgrade $formula"
+        done
+        for cask in "${cask_upgrade_list[@]}"; do
+          echo "  Upgrading cask: $cask"
+          brew upgrade --cask "$cask" || echo "  WARNING: Failed to upgrade $cask"
+        done
+      else
+        echo "  Skipping upgrades."
+      fi
+    fi
+  fi
+fi
+
+echo "==> Sync complete!"

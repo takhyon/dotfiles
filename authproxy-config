@@ -7,7 +7,7 @@ authproxies:
     tags:
       - 'GitLab'
     aliases:
-  - url: 'https://tde.authproxy.org.nasdaqomx.com'
+  - url: 'https://se60tdepalfwp01-tde.nasdaqomx.com:6082/php/uid.php?vsys=1&rule=0'
     type: 'cisco'
     tags:
       - 'TDE'

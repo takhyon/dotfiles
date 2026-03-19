@@ -1,0 +1,26 @@
+#compdef packaged-goods
+
+_packaged-goods() {
+  local -a opts
+  opts=(
+    '--dry-run[Show what would be done without making changes]'
+    '--upgrade[Upgrade a specific package or all]:package:_packaged_goods_packages'
+    '(-h --help)'{-h,--help}'[Show help message]'
+    '*:packages file:_files'
+  )
+  _arguments -s $opts
+}
+
+_packaged_goods_packages() {
+  local script_dir packages_file
+  script_dir="$(dirname "$(readlink "$(command -v packaged-goods)" || command -v packaged-goods)")"
+  packages_file="$script_dir/packages.txt"
+  [[ -f "$packages_file" ]] || return
+
+  local -a pkgs
+  pkgs=(${(f)"$(sed -n '/^\[formulae\]/,/^\[/p' "$packages_file" | grep -v '^\[' | grep -v '^#' | grep -v '^$')"})
+  pkgs+=(${(f)"$(sed -n '/^\[casks\]/,/^\[/p' "$packages_file" | grep -v '^\[' | grep -v '^#' | grep -v '^$')"})
+  _describe 'package' pkgs
+}
+
+_packaged-goods "$@"

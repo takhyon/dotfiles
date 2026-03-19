@@ -1,3 +1,8 @@
+# Kiro CLI pre block. Keep at the top of this file.
+[[ -f "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.pre.zsh" ]] && builtin source "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.pre.zsh"
+
+
+
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH
 
@@ -107,3 +112,69 @@ alias kc='kubectl'
 alias cd..='cd ..'
 alias cdr='cd $(git rev-parse --show-toplevel)'
 
+# Proxy management functions
+proxy_status() {
+    if [[ -n "$HTTP_PROXY" ]]; then
+        echo "Proxy enabled: $HTTP_PROXY"
+    else
+        echo "Proxy disabled"
+    fi
+}
+
+proxy_enable() {
+    if [[ $1 == "au" ]]; then
+        NADQ_PROXY="http://vzen-au.org.nasdaqomx.com:9400"
+        NADQ_SSL_PROXY="http://vzen-au.org.nasdaqomx.com:9400"
+    elif [[ $1 == "se" ]]; then
+        NADQ_PROXY="http://vzen-se.org.nasdaqomx.com:9400"
+        NADQ_SSL_PROXY="http://vzen-se.org.nasdaqomx.com:9400"
+    elif [[ $1 == "us" ]]; then
+        NADQ_PROXY="http://vzen-us.org.nasdaqomx.com:9400"
+        NADQ_SSL_PROXY="http://vzen-us.org.nasdaqomx.com:9400"
+    elif [[ $1 == "cloud" ]]; then
+        NADQ_PROXY="http://185.46.212.92:9400/"
+        NADQ_SSL_PROXY="http://185.46.212.92:9400/"
+    else
+        echo "No region selected, using cloud (zscaler us) as proxy"
+        NADQ_PROXY="http://vzen-us.org.nasdaqomx.com:9400"
+        NADQ_SSL_PROXY="http://vzen-us.org.nasdaqomx.com:9400"
+    fi
+
+
+NADQ_NO_PROXY="localhost,127.0.0.1,*.nasdaq.com,nexus.exchsys.nasdaq.com,registry.git.nasdaq.com,git.nasdaq.com,159.79.212.69,159.79.212.70,159.79.212.71,tfe.ops.nadq2universalservices.gi.nadq.ci,cyber.nasdaq.com,git-pages.nasdaq.com,10.112.97.100,10.44.242.225,psregistry.ndaquniversalservices.com,cloudplatform.git-pages.nasdaq.com,feeds.ndaquniversalservices.com,jira.global.org.nasdaqomx.com"
+
+    export HTTP_PROXY=${NADQ_PROXY}
+    export HTTPS_PROXY=${NADQ_SSL_PROXY}
+    export http_proxy=${NADQ_PROXY}
+    export https_proxy=${NADQ_SSL_PROXY}
+    export NO_PROXY=${NADQ_NO_PROXY}
+    export no_proxy=${NADQ_NO_PROXY}
+    proxy_status
+}
+
+proxy_disable() {
+        unset HTTP_PROXY
+        unset HTTPS_PROXY
+        unset http_proxy
+        unset https_proxy
+        unset NO_PROXY
+        unset no_proxy
+        proxy_status
+}
+
+DEFAULT_PROXY="us"
+proxy_enable ${DEFAULT_PROXY}
+
+
+[[ "$TERM_PROGRAM" == "kiro" ]] && . "$(kiro --locate-shell-integration-path zsh)"
+
+. "$HOME/.local/bin/env"
+
+
+# Kiro CLI post block. Keep at the bottom of this file.
+[[ -f "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.post.zsh"
+# The following lines have been added by Docker Desktop to enable Docker CLI completions.
+fpath=(~/.zsh/completions /Users/salrea/.docker/completions $fpath)
+autoload -Uz compinit
+compinit
+# End of Docker CLI completions

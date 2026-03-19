@@ -1,0 +1,68 @@
+# Homebrew Package Manifest
+# Edit this file to add/remove packages, then run sync-brew.sh
+
+[taps]
+aws/tap
+common-fate/granted
+derailed/k9s
+fairwindsops/tap
+oktadeveloper/tap
+robscott/tap
+sl1pm4t/k2tf
+
+[formulae]
+awscli
+azure-cli
+ggshield
+glab
+go
+helm
+jq
+k2tf
+kubectx
+mas
+pass
+pyenv-virtualenv
+terraform-docs
+tflint
+watch
+aws/tap/eks-node-viewer
+common-fate/granted/granted
+derailed/k9s/k9s
+fairwindsops/tap/rbac-lookup
+robscott/tap/kube-capacity
+
+[casks]
+iterm2
+okta
+powershell
+
+# Manual installs (not managed by this script):
+#
+# Teleport tsh v18.6.3
+#   Do NOT install via Homebrew (not officially maintained).
+#   curl -O https://cdn.teleport.dev/teleport-ent-18.6.3.pkg
+#   sudo installer -pkg teleport-ent-18.6.3.pkg -target /
+
+# [appstore] (uncomment to enable App Store syncing)
+# Add App Store apps as: id name
+# Find IDs with: mas search <app name>
+# 1569813296 1Password for Safari
+# 1091189122 Bear
+# 6698876601 Folder Preview
+# 682658836 GarageBand
+# 408981434 iMovie
+# 361285480 Keynote
+# 6739782043 Launchy
+# 6749231871 Meeter
+# 1274495053 Microsoft To Do
+# 361304891 Numbers
+# 490179405 Okta Verify
+# 823766827 OneDrive
+# 361309726 Pages
+# 1445328303 PrettyJSON for Safari
+# 1611378436 Pure Paste
+# Unable to find in App Store (renamed or delisted?):
+# FruitJuice (com.batteryProject.FruitJuiceMAS)
+# Stackitecture (com.stackitecture.stackitecture)
+# OTP Manager (nl.stickybit.OTP-Manager)

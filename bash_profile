@@ -1,3 +1,9 @@
+
+# Kiro CLI pre block. Keep at the top of this file.
+[[ -f "${HOME}/Library/Application Support/kiro-cli/shell/bash_profile.pre.bash" ]] && builtin source "${HOME}/Library/Application Support/kiro-cli/shell/bash_profile.pre.bash"
+
+
+
 if [ -f ~/.bashrc ]; then
   source ~/.bashrc
 fi
@@ -31,3 +37,11 @@ export PATH=/Users/salrea/homebrew/bin:/Users/salrea/homebrew/sbin:/Users/salrea
 alias assume="source assume"
 
 alias assume=". assume"
+
+
+
+. "$HOME/.local/bin/env"
+
+
+# Kiro CLI post block. Keep at the bottom of this file.
+[[ -f "${HOME}/Library/Application Support/kiro-cli/shell/bash_profile.post.bash" ]] && builtin source "${HOME}/Library/Application Support/kiro-cli/shell/bash_profile.post.bash"

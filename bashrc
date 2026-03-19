@@ -1,3 +1,9 @@
+
+# Kiro CLI pre block. Keep at the top of this file.
+[[ -f "${HOME}/Library/Application Support/kiro-cli/shell/bashrc.pre.bash" ]] && builtin source "${HOME}/Library/Application Support/kiro-cli/shell/bashrc.pre.bash"
+
+
+
 #sour[ -z "$PS1" ] && return
 
 source ~/.git-completion.bash
@@ -77,3 +83,13 @@ shopt -s histappend
 PATH=$PATH:$HOME/.rvm/bin:$HOME:$HOME/Workspace.ISE/chocopackages/helpful_files:$HOME/Workspace.ISE/puppet/helpful_files:$HOME/Workspace/helpful-files:/Users/salrea/go/bin:/usr/local/opt/awscli@1/bin # Add RVM to PATH for scripting
 
 #export EDITOR="/usr/local/bin/mate -w"
+
+
+
+[[ "$TERM_PROGRAM" == "kiro" ]] && . "$(kiro --locate-shell-integration-path bash)"
+
+. "$HOME/.local/bin/env"
+
+
+# Kiro CLI post block. Keep at the bottom of this file.
+[[ -f "${HOME}/Library/Application Support/kiro-cli/shell/bashrc.post.bash" ]] && builtin source "${HOME}/Library/Application Support/kiro-cli/shell/bashrc.post.bash"
