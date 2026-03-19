@@ -5,9 +5,21 @@ Personal dotfiles for macOS with zsh + oh-my-zsh.
 ## Setup
 
 ```bash
-git clone <repo-url> ~/.dotfiles
+git clone --recursive <repo-url> ~/.dotfiles
 cd ~/.dotfiles
 ./symlinks.sh
+```
+
+If already cloned without `--recursive`:
+
+```bash
+git submodule update --init
+```
+
+To update vim plugins:
+
+```bash
+git submodule update --remote
 ```
 
 ## What's Included
