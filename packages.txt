@@ -43,8 +43,6 @@ powershell
 1091189122 Bear
 6698876601 Folder Preview
 671736912 FruitJuice
-682658836 GarageBand
-408981434 iMovie
 409183694 Keynote
 6739782043 Launchy
 1510445899 Meeter
