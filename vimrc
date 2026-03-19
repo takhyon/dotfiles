@@ -36,6 +36,7 @@ let g:solarized_termcolors=256
 let g:solarized_termtrans=1
 let g:solarized_contrast="normal"
 let g:solarized_visibility="high"
+set runtimepath+=~/.vim/colors/solarized
 colorscheme solarized
 
 " Highlight tabs and trailing whitespace
